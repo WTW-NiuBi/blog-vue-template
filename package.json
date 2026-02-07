@@ -1,0 +1,29 @@
+{
+  "name": "vuetemplate",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview",
+    "type-check": "vue-tsc --noEmit",
+    "deploy": "sh scripts/deploy.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "typescript": "^5.9.2",
+    "vue": "^3.5.21",
+    "vue-router": "^4.5.1",
+    "vue-tsc": "^3.0.6",
+    "vuex": "^4.1.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "less": "^4.4.1",
+    "path": "^0.12.7",
+    "vite": "^7.1.5"
+  }
+}
