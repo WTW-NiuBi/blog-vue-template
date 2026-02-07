@@ -7,7 +7,7 @@
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
     "type-check": "vue-tsc --noEmit",
-    "deploy": "sh scripts/deploy.sh"
+    "deploy": "node scripts/deploy.js"
   },
   "keywords": [],
   "author": "",
