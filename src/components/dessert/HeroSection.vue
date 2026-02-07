@@ -5,7 +5,7 @@
       <p class="hero-tagline">手作 · 当日现做</p>
       <h1 class="hero-title">33甜品店</h1>
       <p class="hero-desc">用自然食材，做让你安心的一口甜</p>
-      <a href="#menu" class="btn btn-primary" @click.prevent="scrollToMenu">查看甜品</a>
+      <a href="#menu" class="btn btn-primary" @click.prevent="scrollToMenuRef">查看甜品</a>
     </div>
     <div class="hero-scroll" aria-hidden="true">
       <span>向下滚动</span>
@@ -14,8 +14,15 @@
 </template>
 
 <script lang="ts" setup>
-function scrollToMenu() {
-  document.querySelector('#menu')?.scrollIntoView({ behavior: 'smooth' })
+import type { ComponentPublicInstance } from 'vue'
+
+const props = defineProps<{
+  menuSectionRef: ComponentPublicInstance | null
+}>()
+
+function scrollToMenuRef() {
+  const el = (props.menuSectionRef as ComponentPublicInstance & { $el?: HTMLElement })?.$el
+  el?.scrollIntoView({ behavior: 'smooth' })
 }
 </script>
 
