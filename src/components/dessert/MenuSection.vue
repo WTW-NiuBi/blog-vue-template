@@ -5,7 +5,9 @@
         <h2 class="section-title">人气甜品</h2>
         <p class="section-subtitle">当日现做，售完即止</p>
       </header>
-      <div class="menu-grid">
+      <p v-if="loading" class="menu-status">加载中...</p>
+      <p v-else-if="error" class="menu-status menu-error">{{ error }}</p>
+      <div v-else class="menu-grid">
         <article
           v-for="item in items"
           :key="item.id"
@@ -25,22 +27,23 @@
 </template>
 
 <script lang="ts" setup>
-interface MenuItem {
-  id: string
-  name: string
-  desc: string
-  emoji: string
-  bg: string
-}
+import { ref, onMounted } from 'vue'
+import { getMenu } from '@/apis'
+import type { MenuItem } from '@/apis'
 
-const items: MenuItem[] = [
-  { id: '1', name: '戚风蛋糕', desc: '轻盈蓬松，蛋香与奶香平衡', emoji: '🍰', bg: 'linear-gradient(135deg, #fce4c8 0%, #f5d5b8 100%)' },
-  { id: '2', name: '可颂', desc: '酥脆外皮，内里柔软', emoji: '🥐', bg: 'linear-gradient(135deg, #e8d5c4 0%, #ddc9b8 100%)' },
-  { id: '3', name: '马卡龙', desc: '法式杏仁饼，多种口味', emoji: '🍬', bg: 'linear-gradient(135deg, #f0dde0 0%, #e8d0d5 100%)' },
-  { id: '4', name: '提拉米苏', desc: '马斯卡彭与咖啡的经典组合', emoji: '☕', bg: 'linear-gradient(135deg, #d4c4b0 0%, #c9b89e 100%)' },
-  { id: '5', name: '草莓塔', desc: '当季鲜果与香草卡仕达', emoji: '🍓', bg: 'linear-gradient(135deg, #f8e0e0 0%, #f0d4d4 100%)' },
-  { id: '6', name: '布朗尼', desc: '浓郁巧克力，外脆内软', emoji: '🍫', bg: 'linear-gradient(135deg, #c9b8a8 0%, #b8a898 100%)' }
-]
+const items = ref<MenuItem[]>([])
+const loading = ref(true)
+const error = ref('')
+
+onMounted(async () => {
+  try {
+    items.value = await getMenu()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : '加载失败，请稍后重试'
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <style lang="less" scoped>
@@ -53,6 +56,16 @@ const items: MenuItem[] = [
 .section-header {
   text-align: center;
   margin-bottom: @space-xl;
+}
+
+.menu-status {
+  text-align: center;
+  color: @text-muted;
+  padding: @space-xl 0;
+}
+
+.menu-error {
+  color: @error-color;
 }
 
 .menu-grid {

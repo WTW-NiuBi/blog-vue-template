@@ -25,6 +25,12 @@
 │   │       ├── MenuSection.vue
 │   │       ├── AboutSection.vue
 │   │       └── ContactSection.vue
+│   ├── apis/               # 接口类型与请求（统一在此定义）
+│   │   ├── types.ts        # 通用类型、ApiResponse、业务类型
+│   │   ├── request.ts      # 请求封装（解析 result，成功返回 data）
+│   │   ├── menu.ts
+│   │   ├── contact.ts
+│   │   └── index.ts
 │   ├── router/
 │   ├── store/
 │   ├── views/
@@ -66,6 +72,7 @@ pnpm run deploy
 
 ## 说明
 
+- **接口**：所有请求在 `src/apis` 下定义类型并封装，通过 `request()` 统一处理服务端返回的 `{ result, message, data }`，仅 `result === 1` 时返回 `data`，否则抛出 `message`。
 - 全局样式重置通过 `index.html` 中的 `<link href="/reset.css">` 引入，保证优先生效。
 - 主题色、间距、圆角等均在 `src/assets/styles/main.less` 中通过变量统一管理。
 - 页面为单页结构，顶部导航通过锚点（#menu、#about、#contact）平滑滚动到对应区块。

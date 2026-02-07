@@ -2,23 +2,40 @@
   <section id="hero" class="hero">
     <div class="hero-bg" />
     <div class="container hero-inner">
-      <p class="hero-tagline">手作 · 当日现做</p>
-      <h1 class="hero-title">33甜品店</h1>
-      <p class="hero-desc">用自然食材，做让你安心的一口甜</p>
-      <a href="#menu" class="btn btn-primary" @click.prevent="scrollToMenuRef">查看甜品</a>
+      <template v-if="loading">加载中...</template>
+      <template v-else-if="data">
+        <p class="hero-tagline">{{ data.tagline }}</p>
+        <h1 class="hero-title">{{ data.title }}</h1>
+        <p class="hero-desc">{{ data.desc }}</p>
+        <a href="#menu" class="btn btn-primary" @click.prevent="scrollToMenuRef">{{ data.buttonText }}</a>
+      </template>
     </div>
-    <div class="hero-scroll" aria-hidden="true">
-      <span>向下滚动</span>
+    <div v-if="data" class="hero-scroll" aria-hidden="true">
+      <span>{{ data.scrollText }}</span>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted } from 'vue'
 import type { ComponentPublicInstance } from 'vue'
+import { getHero } from '@/apis'
+import type { HeroData } from '@/apis'
 
 const props = defineProps<{
   menuSectionRef: ComponentPublicInstance | null
 }>()
+
+const data = ref<HeroData | null>(null)
+const loading = ref(true)
+
+onMounted(async () => {
+  try {
+    data.value = await getHero()
+  } finally {
+    loading.value = false
+  }
+})
 
 function scrollToMenuRef() {
   const el = (props.menuSectionRef as ComponentPublicInstance & { $el?: HTMLElement })?.$el

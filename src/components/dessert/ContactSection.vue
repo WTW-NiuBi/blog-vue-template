@@ -1,32 +1,50 @@
 <template>
   <section id="contact" class="contact">
     <div class="container">
-      <header class="section-header">
-        <h2 class="section-title">到店品尝</h2>
-        <p class="section-subtitle">欢迎来店里坐坐，我们等你</p>
-      </header>
-      <div class="contact-card">
-        <div class="contact-info">
-          <div class="contact-item">
-            <span class="contact-label">地址</span>
-            <span class="contact-value">某某市某某区某某路 123 号</span>
+      <p v-if="loading" class="contact-status">加载中...</p>
+      <template v-else-if="data">
+        <header class="section-header">
+          <h2 class="section-title">{{ data.title }}</h2>
+          <p class="section-subtitle">{{ data.subtitle }}</p>
+        </header>
+        <div class="contact-card">
+          <div class="contact-info">
+            <div class="contact-item">
+              <span class="contact-label">地址</span>
+              <span class="contact-value">{{ data.address }}</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">营业时间</span>
+              <span class="contact-value">{{ data.hours }}</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">电话</span>
+              <a :href="`tel:${data.phone}`" class="contact-value contact-link">{{ data.phone }}</a>
+            </div>
           </div>
-          <div class="contact-item">
-            <span class="contact-label">营业时间</span>
-            <span class="contact-value">周二至周日 10:00 — 18:00</span>
-          </div>
-          <div class="contact-item">
-            <span class="contact-label">电话</span>
-            <a href="tel:400-000-0000" class="contact-value contact-link">400-000-0000</a>
-          </div>
+          <a href="#menu" class="btn btn-primary" @click.prevent="scrollToMenu">{{ data.buttonText }}</a>
         </div>
-        <a href="#menu" class="btn btn-primary" @click.prevent="scrollToMenu">查看甜品</a>
-      </div>
+      </template>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted } from 'vue'
+import { getContact } from '@/apis'
+import type { ContactData } from '@/apis'
+
+const data = ref<ContactData | null>(null)
+const loading = ref(true)
+
+onMounted(async () => {
+  try {
+    data.value = await getContact()
+  } finally {
+    loading.value = false
+  }
+})
+
 function scrollToMenu() {
   document.querySelector('#menu')?.scrollIntoView({ behavior: 'smooth' })
 }
@@ -37,6 +55,12 @@ function scrollToMenu() {
 
 .contact {
   padding: @space-2xl 0;
+}
+
+.contact-status {
+  text-align: center;
+  color: @text-muted;
+  padding: @space-xl 0;
 }
 
 .section-header {

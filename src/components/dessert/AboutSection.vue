@@ -1,33 +1,41 @@
 <template>
   <section id="about" class="about">
     <div class="container about-inner">
-      <div class="about-content">
-        <h2 class="section-title">关于33甜品店</h2>
-        <p class="section-subtitle">我们相信，好的甜品来自好的食材与耐心</p>
-        <p class="about-text">
-          33甜品店诞生于对「简单好吃」的坚持。我们每日现做蛋糕、可颂与各式甜点，
-          选用优质奶油、鸡蛋与当季水果，不添加多余香精与防腐，让你吃到的每一口都安心。
-        </p>
-        <p class="about-text">
-          无论是早晨的一块可颂，还是下午的一角戚风，希望33甜品店能成为你日常里的小小确幸。
-        </p>
-      </div>
-      <div class="about-visual">
-        <img
-          :src="aboutImageSrc"
-          alt="33甜品店手作甜品"
-          class="about-visual-img"
-          loading="lazy"
-        />
-      </div>
+      <p v-if="loading" class="about-status">加载中...</p>
+      <template v-else-if="data">
+        <div class="about-content">
+          <h2 class="section-title">{{ data.title }}</h2>
+          <p class="section-subtitle">{{ data.subtitle }}</p>
+          <p v-for="(p, i) in data.paragraphs" :key="i" class="about-text">{{ p }}</p>
+        </div>
+        <div class="about-visual">
+          <img
+            :src="data.imageUrl"
+            :alt="data.imageAlt"
+            class="about-visual-img"
+            loading="lazy"
+          />
+        </div>
+      </template>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
-// 可替换为本地图片：将图片放到 public 目录后改为 '/about-visual.jpg'
-const aboutImageSrc =
-  'https://images.unsplash.com/photo-1558326567-98ae2405596b?w=640&q=85&fit=crop'
+import { ref, onMounted } from 'vue'
+import { getAbout } from '@/apis'
+import type { AboutData } from '@/apis'
+
+const data = ref<AboutData | null>(null)
+const loading = ref(true)
+
+onMounted(async () => {
+  try {
+    data.value = await getAbout()
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <style lang="less" scoped>
@@ -66,6 +74,12 @@ const aboutImageSrc =
   &:last-of-type {
     margin-bottom: 0;
   }
+}
+
+.about-status {
+  text-align: center;
+  color: @text-muted;
+  padding: @space-xl 0;
 }
 
 .about-visual {
